@@ -10,7 +10,6 @@ import { auth } from "../../lib/firebase";
 const sidebarLinks = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Inquiries", href: "/admin/inquiries", icon: Users },
-  { name: "Institution Images", href: "/admin/universities", icon: ImageIcon },
 ];
 
 // We separate the shell so we can wrap it in the AuthProvider
