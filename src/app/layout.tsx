@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({ 
@@ -25,6 +26,10 @@ export const metadata: Metadata = {
   keywords: ["Study abroad consultancy", "Career consultancy Kashmir", "International education consultant", "Study visa guidance", "Scholarships abroad", "KICC Srinagar"],
   alternates: {
     canonical: "/",
+  },
+  // ADD THIS FOR GOOGLE SEARCH CONSOLE VERIFICATION
+  verification: {
+    google: "YOUR_GOOGLE_VERIFICATION_CODE", // Get this from Google Search Console (HTML Tag method)
   },
   openGraph: {
     title: "KICC | Premium International Career Consultancy",
@@ -60,7 +65,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        {/* Local Business & Educational Organization Schema Markup for SEO */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -84,6 +88,9 @@ export default function RootLayout({
         <main className="flex-grow">
           {children}
         </main>
+        
+        {/* ADD GOOGLE ANALYTICS HERE */}
+        <GoogleAnalytics gaId="G-YOUR_MEASUREMENT_ID" /> 
       </body>
     </html>
   );
