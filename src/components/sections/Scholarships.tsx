@@ -4,214 +4,230 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Award, CheckCircle2, Landmark, BriefcaseMedical } from "lucide-react";
 
-// --- DATA ARCHITECTURE ---
+// --- UPDATED DATA ARCHITECTURE ---
 const scholarshipData = [
   {
-    id: "bangladesh",
-    country: "Bangladesh",
-    flag: "🇧🇩",
-    title: "SAARC Quota Scholarship",
-    description: "Guidance for SAARC Quota admissions in Bangladesh, significantly reducing MBBS costs for eligible students. In some cases, government seats and subsidized tuition structures are available. Eligibility depends on merit.",
+    id: "bangladesh", 
+    country: "BANGLADESH", 
+    flag: "🇧🇩", 
+    title: "SAARC QUOTA SCHOLARSHIP",
+    description: "Guidance for SAARC Quota admissions in Bangladesh, which can significantly reduce MBBS costs for eligible students from SAARC countries, including India. In some cases, government seats and subsidized tuition structures are available. Eligibility depends on merit and official criteria.",
     support: [
-      "SAARC quota eligibility guidance",
-      "Documentation support",
-      "Government medical college application",
+      "SAARC quota eligibility guidance", 
+      "Documentation support", 
+      "Government medical college application guidance",
       "Admission process counselling"
     ]
   },
   {
-    id: "egypt",
-    country: "Egypt",
-    flag: "🇪🇬",
-    title: "Merit-Based Discounts",
-    description: "Egyptian medical universities may provide merit-based tuition discounts or fee concessions for eligible international students looking to pursue high-quality medical education.",
+    id: "egypt", 
+    country: "EGYPT", 
+    flag: "🇪🇬", 
+    title: "MERIT-BASED DISCOUNTS & UNIVERSITY SCHOLARSHIPS",
+    description: "Some Egyptian medical universities may provide merit-based tuition discounts or fee concessions for eligible international students.",
     support: [
-      "Scholarship eligibility guidance",
-      "University selection assistance",
+      "Scholarship eligibility guidance", 
+      "University selection assistance", 
       "Documentation support"
     ]
   },
   {
-    id: "italy",
-    country: "Italy",
-    flag: "🇮🇹",
-    title: "Regional Scholarships (DSU)",
-    description: "Italy is globally renowned for its regional DSU scholarships that may heavily subsidize or fully cover tuition, accommodation, or living expenses for eligible international students.",
+    id: "italy", 
+    country: "ITALY", 
+    flag: "🇮🇹", 
+    title: "REGIONAL SCHOLARSHIPS (DSU) & FINANCIAL AID",
+    description: "Italy is known for regional scholarships (DSU scholarships) that may support tuition, accommodation, or living expenses for eligible international students.",
     support: [
-      "Scholarship documentation guidance",
-      "Admission support",
+      "Scholarship documentation guidance", 
+      "Admission support", 
       "Financial aid counselling"
     ]
   },
   {
-    id: "kazakhstan",
-    country: "Kazakhstan",
-    flag: "🇰🇿",
-    title: "University Fee Waivers",
-    description: "Top-tier medical universities in Kazakhstan offer generous merit scholarships, tuition discounts, or early admission benefits to attract bright international students.",
+    id: "kazakhstan", 
+    country: "KAZAKHSTAN", 
+    flag: "🇰🇿", 
+    title: "UNIVERSITY SCHOLARSHIPS & FEE WAIVERS",
+    description: "Certain universities may offer merit scholarships, tuition discounts, or early admission benefits to international students.",
     support: [
-      "Scholarship guidance",
-      "University-specific financial aid",
+      "Scholarship guidance", 
+      "University-specific financial aid information", 
       "Admission counselling"
     ]
   },
   {
-    id: "china",
-    country: "China",
-    flag: "🇨🇳",
-    title: "Gov. & University Scholarships",
-    description: "Chinese universities provide highly lucrative international student scholarships, tuition waivers, and university-funded support packages depending on your academic profile.",
+    id: "china", 
+    country: "CHINA", 
+    flag: "🇨🇳", 
+    title: "GOVERNMENT & UNIVERSITY SCHOLARSHIPS",
+    description: "Some Chinese universities provide international student scholarships, tuition waivers, and university-funded support depending on eligibility.",
     support: [
-      "Scholarship information",
-      "University selection guidance",
+      "Scholarship information", 
+      "University selection guidance", 
       "Application assistance"
     ]
   }
 ];
 
 const generalSupport = [
-  "Eligibility Assessment",
-  "Merit Guidance",
-  "Fee Waiver Info",
-  "Documentation",
-  "Application Support",
-  "Financial Planning"
+  "SCHOLARSHIP ELIGIBILITY ASSESSMENT",
+  "MERIT-BASED SCHOLARSHIP GUIDANCE",
+  "TUITION FEE WAIVER INFORMATION",
+  "DOCUMENTATION SUPPORT",
+  "UNIVERSITY SCHOLARSHIP APPLICATION ASSISTANCE",
+  "MBBS ADMISSION & FINANCIAL PLANNING SUPPORT"
 ];
 
 export function Scholarships() {
   const [activeCountry, setActiveCountry] = useState(scholarshipData[0]);
 
   return (
-    // bg-brand-dark aligns perfectly with the "Our Mission" card
-    <section id="scholarships" className="pt-16 pb-8 bg-brand-dark relative overflow-hidden">
+    <section id="scholarships" className="pt-12 pb-12 bg-[#0a192f] relative overflow-hidden">
       
-      {/* MAGNIFICENT BACKGROUND SHAPES */}
+      {/* ANIMATED BACKGROUND SHAPES */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        {/* Glowing Orbs */}
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-yellow-500/10 blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-brand-primary/10 blur-[100px]" />
-        
-        {/* Geometric Outlines */}
-        <div className="absolute top-[20%] left-[5%] w-72 h-72 border border-white/5 rounded-full transform -rotate-12" />
-        <div className="absolute bottom-[20%] right-[10%] w-96 h-96 border border-yellow-500/10 rounded-3xl transform rotate-45" />
-        <div className="absolute top-[50%] left-[50%] w-[800px] h-[800px] border border-white/5 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-10%] right-[-5%] w-[350px] h-[350px] rounded-full bg-yellow-500/20 blur-[100px]" 
+        />
+        <motion.div 
+          animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-brand-primary/20 blur-[90px]" 
+        />
       </div>
 
       <div className="container mx-auto px-4 md:px-8 relative z-10">
         
-        {/* COMPACT HEADER (Top Most Part) */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4 border-b border-white/10 pb-6">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 text-yellow-400 font-bold mb-4 text-xs tracking-wider uppercase border border-yellow-500/20">
-              <Award className="w-3.5 h-3.5" />
-              Global Financial Aid
-            </div>
-            <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight">
-              Unlock High-Value <span className="text-yellow-400 italic">Scholarships</span>
-            </h2>
-          </div>
-          <p className="text-sm text-slate-400 font-medium max-w-sm md:text-right">
-            Explore exclusive quotas, government grants, and university fee waivers across our top partner destinations.
-          </p>
+        {/* HEADER */}
+        <div className="mb-8 text-center md:text-left">
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-yellow-500/10 text-yellow-400 font-black mb-4 text-[10px] uppercase tracking-[0.2em] border border-yellow-500/20"
+          >
+            <Award className="w-3.5 h-3.5" /> GLOBAL AID PROGRAMS
+          </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-5xl font-black text-white tracking-widest uppercase"
+          >
+            UNLOCK <span className="text-yellow-400">SCHOLARSHIPS</span>
+          </motion.h2>
         </div>
 
-        {/* INTERACTIVE EXPLORER (Compact Grid) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
-          
-          {/* Left Column: Country Selector */}
-          <div className="lg:col-span-4">
-            <div className="flex flex-row lg:flex-col gap-3 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 scrollbar-hide snap-x">
-              {scholarshipData.map((data) => (
-                <button
-                  key={data.id}
-                  onClick={() => setActiveCountry(data)}
-                  className={`relative flex items-center gap-4 px-5 py-4 rounded-2xl text-left transition-all duration-300 shrink-0 lg:shrink w-[260px] lg:w-full snap-start border ${
-                    activeCountry.id === data.id
-                      ? "bg-white/10 border-yellow-400/30 shadow-[0_0_30px_rgba(250,204,21,0.1)] backdrop-blur-md"
-                      : "bg-white/5 border-transparent text-slate-400 hover:bg-white/10"
-                  }`}
-                >
-                  <span className="text-3xl drop-shadow-md">{data.flag}</span>
+        {/* WRAPPED PILL MENU */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="flex flex-wrap justify-center md:justify-start gap-2 mb-8"
+        >
+          {scholarshipData.map((data) => (
+            <motion.button
+              key={data.id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setActiveCountry(data)}
+              className={`flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-sm text-[11px] md:text-xs font-black uppercase tracking-widest transition-all border ${
+                activeCountry.id === data.id
+                  ? "bg-yellow-400/20 border-yellow-400/50 text-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.2)]"
+                  : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              <span className="text-lg drop-shadow-md">{data.flag}</span>
+              <span>{data.country}</span>
+            </motion.button>
+          ))}
+        </motion.div>
+
+        {/* DYNAMIC CONTENT CARD */}
+        <div className="min-h-[280px] md:min-h-[320px] mb-10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeCountry.id}
+              initial={{ opacity: 0, y: 20, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.97 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-sm p-6 md:p-8 shadow-2xl flex flex-col relative overflow-hidden"
+            >
+              {/* Internal Card Glow */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/5 rounded-full blur-[60px] transform translate-x-1/2 -translate-y-1/2" />
+
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h4 className={`font-bold text-base ${activeCountry.id === data.id ? "text-yellow-400" : "text-slate-300"}`}>
-                      {data.country}
+                    <h3 className="text-xl md:text-3xl font-black text-white flex items-center gap-3 tracking-widest uppercase">
+                      {activeCountry.country} <span className="text-2xl md:text-4xl">{activeCountry.flag}</span>
+                    </h3>
+                    <h4 className="text-yellow-400 font-bold text-[10px] md:text-xs uppercase mt-2 tracking-[0.15em] border-l-2 border-yellow-400 pl-2">
+                      {activeCountry.title}
                     </h4>
-                    <p className={`text-xs font-medium truncate max-w-[180px] lg:max-w-none ${activeCountry.id === data.id ? "text-white" : "opacity-70"}`}>
-                      {data.title}
-                    </p>
                   </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column: Dynamic Data Display */}
-          <div className="lg:col-span-8 min-h-[320px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeCountry.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl h-full flex flex-col relative overflow-hidden"
-              >
-                {/* Decorative internal glass shape */}
-                <div className="absolute -top-20 -right-20 w-64 h-64 bg-yellow-500/5 rounded-full blur-[50px]" />
-
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className="flex items-start justify-between mb-6">
-                    <div>
-                      <h3 className="text-2xl md:text-3xl font-black text-white flex items-center gap-3 mb-1">
-                        {activeCountry.country} {activeCountry.flag}
-                      </h3>
-                      <h4 className="text-yellow-400 font-bold text-sm tracking-wide uppercase">
-                        {activeCountry.title}
-                      </h4>
-                    </div>
-                    <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center shrink-0 border border-yellow-500/20">
-                      <Landmark className="w-6 h-6 text-yellow-400" />
-                    </div>
-                  </div>
-
-                  <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-6 font-medium">
-                    {activeCountry.description}
-                  </p>
-
-                  <div className="bg-black/20 rounded-2xl p-5 border border-white/5 mt-auto">
-                    <h5 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                      <BriefcaseMedical className="w-4 h-4 text-yellow-400" />
-                      KICC Support Provided:
-                    </h5>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {activeCountry.support.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5">
-                          <CheckCircle2 className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />
-                          <span className="text-xs text-slate-300 font-medium leading-tight">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 shadow-inner hidden sm:flex">
+                    <Landmark className="w-5 h-5 md:w-6 md:h-6 text-yellow-400" />
                   </div>
                 </div>
+
+                <p className="text-slate-300 text-xs md:text-sm leading-loose mb-6 font-light tracking-wide max-w-3xl">
+                  {activeCountry.description}
+                </p>
+
+                <div className="bg-black/40 rounded-sm p-4 md:p-5 border border-white/5">
+                  <h5 className="text-white font-black text-[10px] md:text-xs mb-4 flex items-center gap-2 uppercase tracking-[0.2em]">
+                    <BriefcaseMedical className="w-4 h-4 text-yellow-400" /> SUPPORT OFFERED
+                  </h5>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
+                    {activeCountry.support.map((item, idx) => (
+                      <motion.li 
+                        key={idx} 
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 + (idx * 0.1) }}
+                        className="flex items-start gap-2.5"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-yellow-400 shrink-0 mt-0.5" />
+                        <span className="text-[10px] md:text-xs text-slate-300 font-medium tracking-wide uppercase leading-snug">{item}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* GENERAL SUPPORT TICKER/GRID */}
+        <div className="border-t border-white/10 pt-8 mb-8">
+          <h5 className="text-center text-white/50 font-black text-[10px] uppercase tracking-[0.3em] mb-6">
+            OUR SCHOLARSHIP GUIDANCE INCLUDES
+          </h5>
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+            {generalSupport.map((support, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.05 }}
+                className="flex items-center gap-2 bg-white/5 px-3 py-2 md:px-4 md:py-2.5 rounded-sm border border-white/10 backdrop-blur-sm"
+              >
+                <span className="text-yellow-400 font-black text-xs">✓</span>
+                <span className="text-[9px] md:text-[10px] font-bold text-white uppercase tracking-widest">{support}</span>
               </motion.div>
-            </AnimatePresence>
+            ))}
           </div>
         </div>
 
-        {/* COMPACT GLOBAL SUPPORT ROW */}
-        <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 mb-8">
-          {generalSupport.map((support, idx) => (
-            <div key={idx} className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-sm">
-              <CheckCircle2 className="w-3.5 h-3.5 text-yellow-400" />
-              <span className="text-xs font-bold text-white">{support}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* TINY, MUTED DISCLAIMER AT THE LOWEST POINT */}
-        <div className="text-center pt-6 border-t border-white/5">
-          <p className="text-[10px] text-slate-600 font-semibold uppercase tracking-widest leading-relaxed max-w-4xl mx-auto">
-            Disclaimer: KICC acts in an advisory capacity. We do not guarantee scholarships or financial aid. Final approval depends solely on universities, government authorities, and scholarship providers.
+        {/* DISCLAIMER */}
+        <div className="text-center bg-black/30 rounded-sm p-4 border border-white/5">
+          <p className="text-[9px] md:text-[10px] text-slate-500 font-black uppercase tracking-[0.15em] leading-relaxed max-w-4xl mx-auto">
+            <strong className="text-slate-400">IMPORTANT DISCLAIMER:</strong> KASHMIR INTERNATIONAL CAREER CONSULTANCY DOES NOT GUARANTEE SCHOLARSHIPS OR FINANCIAL AID. FINAL SCHOLARSHIP APPROVAL DEPENDS SOLELY ON UNIVERSITIES, GOVERNMENT AUTHORITIES, AND SCHOLARSHIP PROVIDERS.
           </p>
         </div>
 
