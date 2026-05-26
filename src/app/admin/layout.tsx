@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Users, ImageIcon, LogOut, Bell } from "lucide-react";
+import { AuthProvider, useAuth } from "../../context/authcontext";
+import { signOut } from "firebase/auth";
+import { auth } from "../../lib/firebase";
 
 const sidebarLinks = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -10,13 +13,28 @@ const sidebarLinks = [
   { name: "Institution Images", href: "/admin/universities", icon: ImageIcon },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+// We separate the shell so we can wrap it in the AuthProvider
+function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user } = useAuth();
+
+  // If we are on the login page, don't show the sidebar/topbar
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
+  // If not logged in, the AuthContext will handle the redirect, but we return null here to prevent flashing UI
+  if (!user) return null;
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push("/admin/login");
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
-      
-      {/* 1. DARK SAAS SIDEBAR */}
+      {/* SIDEBAR */}
       <aside className="w-72 bg-[#0B1727] text-slate-300 flex flex-col fixed h-full z-20">
         <div className="h-20 flex items-center px-8 border-b border-white/10 shrink-0">
           <div className="w-8 h-8 bg-white rounded-lg p-1 flex items-center justify-center mr-3">
@@ -47,14 +65,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         <div className="p-4 border-t border-white/10">
-          <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-500 transition-colors font-medium">
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-500 transition-colors font-medium">
             <LogOut className="w-5 h-5" />
             Sign Out
           </button>
         </div>
       </aside>
 
-      {/* 2. MAIN CONTENT AREA */}
+      {/* MAIN CONTENT AREA */}
       <main className="flex-1 ml-72 flex flex-col min-h-screen">
         <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10">
           <div className="font-bold text-brand-dark tracking-wide">Secure Admin Portal</div>
@@ -77,5 +95,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </main>
     </div>
+  );
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <AdminShell>{children}</AdminShell>
+    </AuthProvider>
   );
 }
