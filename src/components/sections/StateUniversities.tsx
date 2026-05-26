@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Stethoscope, Cpu, LibraryBig, Building, GraduationCap } from "lucide-react";
-import { db } from "../../lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
 
 // IMPORTANT: Added 'id' to match the admin panel database IDs
 const statesData = [
@@ -86,27 +84,9 @@ const statesData = [
   }
 ];
 
-export function StateUniversities() {
+// ACCEPT THE PRE-FETCHED IMAGES AS A PROP
+export function StateUniversities({ initialImages = {} }: { initialImages?: Record<string, string> }) {
   const [activeState, setActiveState] = useState("bangalore");
-  const [dbImages, setDbImages] = useState<Record<string, string>>({});
-  
-  // FETCH IMAGES FROM FIREBASE ON MOUNT
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "domesticImages"));
-        const images: Record<string, string> = {};
-        querySnapshot.forEach((doc) => {
-          images[doc.id] = doc.data().imageUrl;
-        });
-        setDbImages(images);
-      } catch (error) {
-        console.error("Failed to fetch images from Firebase", error);
-      }
-    };
-    fetchImages();
-  }, []);
-
   const currentStateData = statesData.find(s => s.id === activeState);
 
   return (
@@ -175,12 +155,12 @@ export function StateUniversities() {
                           transition={{ delay: idx * 0.05 }}
                           className="bg-white rounded-xl md:rounded-2xl p-3 md:p-4 border border-slate-200/60 shadow-sm hover:shadow-md hover:border-brand-primary/30 transition-all flex flex-row items-center gap-3 group"
                         >
-                          {/* DYNAMIC IMAGE RENDER FROM FIREBASE */}
+                          {/* USE THE IMAGES PASSED DOWN FROM THE SERVER PROP */}
                           <div className="w-14 h-14 md:w-16 md:h-16 bg-slate-50 rounded-lg border border-slate-100 overflow-hidden flex items-center justify-center shrink-0">
-                            {dbImages[inst.id] ? (
+                            {initialImages[inst.id] ? (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img 
-                                src={dbImages[inst.id]} 
+                                src={initialImages[inst.id]} 
                                 alt={inst.name} 
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
                               />
