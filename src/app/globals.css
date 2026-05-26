@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 228 33% 97%; /* #fbfbfc base */
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 174 74% 37%; /* #19a698 ring */
+    --radius: 1rem;
+  }
+}
+ 
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: #fbfbfc;
+    color: hsl(var(--foreground));
+    /* Pure CSS equivalent of @apply antialiased */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body ::selection {
+    background-color: #19a698;
+    color: white;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #0f7573;
+    /* Pure CSS equivalent of @apply tracking-tight */
+    letter-spacing: -0.025em; 
+  }
+}
+
+@layer utilities {
+  .glass {
+    /* Pure CSS equivalent of the glass classes */
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px 0 rgba(15, 117, 115, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .section-padding {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+  
+  /* Pure CSS equivalent of md: breakpoint */
+  @media (min-width: 768px) {
+    .section-padding {
+      padding-top: 8rem;
+      padding-bottom: 8rem;
+    }
+  }
+}
