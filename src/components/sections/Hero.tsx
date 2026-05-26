@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { Button } from "../ui/button";
 import { ArrowRight, Star, GraduationCap, Users, Award, Sparkles } from "lucide-react";
@@ -29,11 +30,10 @@ export function Hero() {
   const opacityBg = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const yImage = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
 
-  // Smooth scroll handler with offset for the sticky navbar
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const y = element.getBoundingClientRect().top + window.scrollY - 80; // 80px offset
+      const y = element.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
@@ -122,9 +122,15 @@ export function Hero() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + (i * 0.1) }}
-                    className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white shadow-md overflow-hidden bg-brand-light3"
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white shadow-md overflow-hidden bg-brand-light3 relative"
                   >
-                    <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Student" className="w-full h-full object-cover" />
+                    <Image 
+                      src={`https://i.pravatar.cc/100?img=${i + 10}`} 
+                      alt="Student" 
+                      fill
+                      sizes="(max-width: 768px) 32px, 40px"
+                      className="object-cover" 
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -153,7 +159,14 @@ export function Hero() {
             />
             
             <div className="relative rounded-[60px] rounded-br-[20px] md:rounded-[80px] md:rounded-br-[30px] overflow-hidden border-[6px] border-white shadow-2xl z-10 bg-brand-dark aspect-[4/5] transform transition-transform hover:scale-[1.02] duration-500">
-              <img src="https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779777535/founder_kxowrh.jpg" alt="Founder of KICC" className="w-full h-full object-cover object-top" />
+              <Image 
+                src="https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779777535/founder_kxowrh.jpg" 
+                alt="Founder of KICC" 
+                fill
+                priority // CRITICAL FOR LCP / SEO
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover object-top" 
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
             </div>
             
