@@ -2,10 +2,16 @@ export interface University {
   id: string;
   name: string;
   country: string;
-  ranking?: string;
+  city: string;
   imageUrl: string;
-  isTopUniversity: boolean;
-  scholarshipsAvailable: boolean;
+  whoApproved: boolean;
+  avgFees: string;
+  established: string;
+  
+  // Extra Details for Expanded View
+  messIncluded: boolean;
+  messCharges?: string;
+  extraDetails?: string;
 }
 
 export interface LeadFormData {
