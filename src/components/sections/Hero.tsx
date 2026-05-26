@@ -29,11 +29,19 @@ export function Hero() {
   const opacityBg = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const yImage = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
 
+  // Smooth scroll handler with offset for the sticky navbar
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.scrollY - 80; // 80px offset
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
   return (
     <section 
       ref={containerRef} 
       id="hero" 
-      // Further reduced top padding since logo is gone
       className="relative pt-24 pb-12 md:pt-32 md:pb-24 overflow-hidden bg-gradient-to-b from-[#e9f0e1] to-[#fbfbfc]"
     >
       <motion.div 
@@ -83,7 +91,11 @@ export function Hero() {
 
             <motion.div variants={fadeUpVariant} className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-8 z-10 relative items-center justify-center lg:justify-start">
               <motion.div whileTap={{ scale: 0.96 }} className="w-full sm:w-auto">
-                <Button size="lg" className="w-full bg-brand-primary hover:bg-brand-dark text-white rounded-full h-12 md:h-14 px-6 md:px-8 text-sm md:text-base font-bold group shadow-xl shadow-brand-primary/25 transition-all">
+                <Button 
+                  size="lg" 
+                  onClick={() => scrollToSection("lead-form")}
+                  className="w-full bg-brand-primary hover:bg-brand-dark text-white rounded-full h-12 md:h-14 px-6 md:px-8 text-sm md:text-base font-bold group shadow-xl shadow-brand-primary/25 transition-all"
+                >
                   Book Free Counselling 
                   <div className="ml-2 bg-white/20 rounded-full p-1 group-hover:translate-x-1.5 transition-transform">
                     <ArrowRight className="w-4 h-4" />
@@ -91,7 +103,12 @@ export function Hero() {
                 </Button>
               </motion.div>
               <motion.div whileTap={{ scale: 0.96 }} className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full rounded-full h-12 md:h-14 px-6 md:px-8 text-sm md:text-base font-bold border-black/10 bg-white/50 backdrop-blur-md text-brand-dark hover:bg-white group shadow-sm transition-all">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  onClick={() => scrollToSection("top-universities")}
+                  className="w-full rounded-full h-12 md:h-14 px-6 md:px-8 text-sm md:text-base font-bold border-black/10 bg-white/50 backdrop-blur-md text-brand-dark hover:bg-white group shadow-sm transition-all"
+                >
                   Explore Universities
                 </Button>
               </motion.div>

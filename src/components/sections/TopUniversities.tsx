@@ -7,59 +7,8 @@ import { MapPin, ShieldCheck, Banknote, CalendarDays, Utensils, Info, ChevronDow
 import { University } from "../../types";
 
 const topUniversities: University[] = [
-  {
+    {
     id: "1",
-    name: "Tashkent Pharmaceutical Institute",
-    country: "Uzbekistan",
-    city: "Tashkent",
-    imageUrl: "https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779783978/Tashkent_Pharmaceutical_Institute_gxni1u.png", 
-    whoApproved: true,
-    avgFees: "3,500 USD/yr",
-    established: "1937",
-    messIncluded: false,
-    messCharges: "1,200 USD/yr",
-    extraDetails: "Hostel & insurance separate."
-  },
-  {
-    id: "2",
-    name: "Tashkent State Dental / Medical Univ.",
-    country: "Uzbekistan",
-    city: "Tashkent",
-    imageUrl: "https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779783948/Tashkent_State_Dental_laiueq.png", 
-    whoApproved: true,
-    avgFees: "3,500 USD/yr",
-    established: "Oldest in region",
-    messIncluded: true,
-    extraDetails: "Premier dental institute."
-  },
-  {
-    id: "3",
-    name: "Samarkand State Medical University",
-    country: "Uzbekistan",
-    city: "Samarkand",
-    imageUrl: "https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779783939/Samarkand_State_Medical_University_mwtave.webp", 
-    whoApproved: true,
-    avgFees: "3,850 USD/yr",
-    established: "1930",
-    messIncluded: false,
-    messCharges: "1,000 USD/yr",
-  },
-  {
-    id: "4",
-    name: "Cairo University (Kasr Al-Ainy)",
-    country: "Egypt",
-    city: "Cairo",
-    imageUrl: "https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779783977/Cairo_University_Kasr_Al-Ainy_lnwvrj.webp", 
-    whoApproved: true,
-    avgFees: "8,000 USD/yr",
-    established: "1908",
-    messIncluded: false,
-    messCharges: "Varies",
-    extraDetails: "Highly prestigious."
-  },
-  
-  {
-    id: "5",
     name: "Namangan State University | Faculty of Medicine",
     country: "Uzbekistan",
     city: "Namangan",
@@ -72,18 +21,70 @@ const topUniversities: University[] = [
     extraDetails: "Features direct flight connectivity from Delhi, Indian faculty support, and FMGE-oriented guidance."
   },
   {
-    id: "6",
-    name: "Avicenna Tajik State Medical University",
-    country: "Tajikistan",
-    city: "Dushanbe",
-    imageUrl: "https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779783977/Avicenna_Tajik_State_Medical_University_eobut4.webp", 
-    whoApproved: true, // Explicitly recognized by WHO & NMC
-    avgFees: "4,000 USD per year",
-    established: "1939",
+    id: "2",
+    name: "Tashkent Pharmaceutical Institute",
+    country: "Uzbekistan",
+    city: "Tashkent",
+    imageUrl: "https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779783978/Tashkent_Pharmaceutical_Institute_gxni1u.png", 
+    whoApproved: true,
+    avgFees: "3,500 USD/yr",
+    established: "1937",
     messIncluded: false,
-    messCharges: "Approx. 180 USD per month (Includes Hostel)",
-    extraDetails: "The leading medical institution in Tajikistan, named after the famous Persian physician Avicenna."
+    messCharges: "1,200 USD/yr",
+    extraDetails: "Hostel & insurance separate."
   },
+  {
+    id: "3",
+    name: "Dhaka National Medical College",
+    country: "Bangladesh",
+    city: "Dhaka",
+    imageUrl: "https://res.cloudinary.com/drytpdpx3/image/upload/v1779458842/Dhaka_National_Medical_College_zmw6oa.webp", 
+    whoApproved: true, // Explicitly recognized by WHO & NMC
+    avgFees: "54000 USD Total",
+    established: "1994",
+    messIncluded: false,
+    messCharges: "Approx. 30 USD per month (Includes Hostel)",
+    extraDetails: "Dhaka National Medical College is one of the oldest and most respected private medical colleges in Bangladesh."
+  },
+  {
+    id: "4",
+    name: "Samarkand State Medical University",
+    country: "Uzbekistan",
+    city: "Samarkand",
+    imageUrl: "https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779783939/Samarkand_State_Medical_University_mwtave.webp", 
+    whoApproved: true,
+    avgFees: "3,850 USD/yr",
+    established: "1930",
+    messIncluded: false,
+    messCharges: "1,000 USD/yr",
+  },
+  {
+    id: "5",
+    name: "Cairo University (Kasr Al-Ainy)",
+    country: "Egypt",
+    city: "Cairo",
+    imageUrl: "https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779783977/Cairo_University_Kasr_Al-Ainy_lnwvrj.webp", 
+    whoApproved: true,
+    avgFees: "8,000 USD/yr",
+    established: "1908",
+    messIncluded: false,
+    messCharges: "Varies",
+    extraDetails: "Highly prestigious."
+  },
+
+    {
+    id: "6",
+    name: "Tashkent State Dental / Medical Univ.",
+    country: "Uzbekistan",
+    city: "Tashkent",
+    imageUrl: "https://res.cloudinary.com/dwwzpcnkx/image/upload/q_auto/f_auto/v1779783948/Tashkent_State_Dental_laiueq.png", 
+    whoApproved: true,
+    avgFees: "3,500 USD/yr",
+    established: "Oldest in region",
+    messIncluded: true,
+    extraDetails: "Premier dental institute."
+  },
+
 ];
 
 const UniversityCard = ({ uni }: { uni: University }) => {
