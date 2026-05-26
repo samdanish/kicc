@@ -93,7 +93,7 @@ export function Hero() {
               <motion.div whileTap={{ scale: 0.96 }} className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
-                  onClick={() => scrollToSection("lead-form")}
+                  onClick={() => scrollToSection("inquiry")}
                   className="w-full bg-brand-primary hover:bg-brand-dark text-white rounded-full h-12 md:h-14 px-6 md:px-8 text-sm md:text-base font-bold group shadow-xl shadow-brand-primary/25 transition-all"
                 >
                   Book Free Counselling 
@@ -106,7 +106,7 @@ export function Hero() {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  onClick={() => scrollToSection("top-universities")}
+                  onClick={() => scrollToSection("universities")}
                   className="w-full rounded-full h-12 md:h-14 px-6 md:px-8 text-sm md:text-base font-bold border-black/10 bg-white/50 backdrop-blur-md text-brand-dark hover:bg-white group shadow-sm transition-all"
                 >
                   Explore Universities

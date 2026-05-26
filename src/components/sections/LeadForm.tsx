@@ -132,7 +132,7 @@ export function LeadForm() {
               </div>
               <div className="flex gap-3 md:gap-4 items-center text-xs md:text-sm font-semibold">
                 <Mail className="w-4 h-4 md:w-5 md:h-5 text-brand-primary shrink-0" />
-                <a href="mailto:info@kicc.co.in" className="hover:text-white transition-colors break-all">info@thecareeradvisors.in</a>
+                <a href="mailto:Kashmirinternational@kicc.co.in" className="hover:text-white transition-colors break-all">Kashmirinternational@kicc.co.in</a>
               </div>
             </div>
           </motion.div>

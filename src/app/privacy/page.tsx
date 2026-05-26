@@ -79,7 +79,7 @@ export default function PrivacyPage() {
               <p className="font-bold text-brand-dark mb-2">Kashmir International Career Consultancy (KICC)</p>
               <p><strong>Office:</strong> 2nd Floor, Baghat Chowk, Al Harim Complex, Near Old Cottage Inn, Baghat, Srinagar, J&K – 190005</p>
               <p><strong>Phone:</strong> +91 9622618773</p>
-              <p><strong>Email:</strong> info@thecareeradvisors.in / Kashmirinternational@kicc.co.in</p>
+              <p><strong>Email:</strong>Kashmirinternational@kicc.co.in</p>
               <p><strong>Website:</strong> kicc.co.in</p>
             </div>
 

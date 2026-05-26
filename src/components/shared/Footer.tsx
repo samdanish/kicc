@@ -145,12 +145,11 @@ export function Footer() {
               Designed & Developed by
             </span>
             
-            <div className="flex items-center gap-1.5 z-10">
-              <span className="text-[11px] md:text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-200 to-yellow-400 drop-shadow-sm tracking-wide">
+            <div className="flex items-center gap-1.5 z-4">
+              <span className="text-[4px] md:text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-200 to-yellow-400 drop-shadow-sm tracking-wide">
                 Team Haadi
               </span>
-              <Sparkles className="w-3 h-3 text-yellow-400 animate-pulse" />
-            </div>
+               </div>
           </a>
         </div>
 
