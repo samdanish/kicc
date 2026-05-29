@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://kicc.co.in"),
   title: {
-    default: "KICC | Premium International Career Consultancy in Kashmir",
+    default: "KICC |Kashmir International Career Consultancy | KICC Srinagar",
     template: "%s | KICC", 
   },
   description: "Expert guidance for overseas education, study visas, and scholarships. KICC helps students in Kashmir secure admissions in top international universities.",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     google: "YOUR_GOOGLE_VERIFICATION_CODE", 
   },
   openGraph: {
-    title: "KICC | Premium International Career Consultancy",
+    title: "KICC |Kashmir International Career Consultancy | KICC Srinagar",
     description: "Start your international education journey with KICC. Top universities, scholarships, and visa success.",
     url: "https://kicc.co.in",
     siteName: "KICC",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "KICC | Premium International Career Consultancy",
+    title: "KICC |Kashmir International Career Consultancy | KICC Srinagar",
     description: "Expert guidance for overseas education, study visas, and scholarships.",
   },
   robots: {
@@ -72,7 +72,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "EducationalOrganization",
               "name": "Kashmir International Career Consultancy (KICC)",
-              "description": "Premium study abroad and career consultancy based in Kashmir.",
+              "description": "Best study abroad and career consultancy based in Kashmir |KICC Srinagar",
               "url": "https://kicc.co.in", 
               "address": {
                 "@type": "PostalAddress",
