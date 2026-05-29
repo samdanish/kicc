@@ -57,9 +57,6 @@ export function GlobalDestinations() {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-bold tracking-wide uppercase mb-4">
-            <Sparkles className="w-4 h-4" /> Comprehensive Network
-          </div>
           <h2 className="text-3xl md:text-5xl font-black text-brand-dark tracking-tight mb-4">
             Global Medical Destinations
           </h2>

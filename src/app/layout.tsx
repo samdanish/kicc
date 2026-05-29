@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import FloatingContactButtons from "../components/shared/FloatingContactButtons";
 import VisitorTracker from "../components/shared/VisitorTracker"; 
 import "./globals.css";
+import ConsultationPopup from "../components/shared/ConsultationPopup";
 
 const jakarta = Plus_Jakarta_Sans({ 
   subsets: ["latin"],
@@ -95,6 +96,7 @@ export default function RootLayout({
         
         {/* Globally Available Floating Contact Buttons */}
         <FloatingContactButtons />
+        <ConsultationPopup />
 
       </body>
     </html>
