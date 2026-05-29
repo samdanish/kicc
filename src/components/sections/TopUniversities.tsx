@@ -90,6 +90,14 @@ const topUniversities: University[] = [
 const UniversityCard = ({ uni }: { uni: University }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
   return (
     <motion.div 
       layout
@@ -183,7 +191,10 @@ const UniversityCard = ({ uni }: { uni: University }) => {
           >
             <motion.div animate={{ rotate: isExpanded ? 180 : 0 }}><ChevronDown className="w-4 h-4" /></motion.div>
           </Button>
-          <Button className="flex-1 bg-[#3B5B85] hover:bg-[#2A4365] text-white text-[11px] md:text-xs font-bold h-8 md:h-10 rounded-lg md:rounded-xl transition-all shadow-sm">
+          <Button 
+            onClick={() => scrollToSection("inquiry")}
+            className="flex-1 bg-[#3B5B85] hover:bg-[#2A4365] text-white text-[11px] md:text-xs font-bold h-8 md:h-10 rounded-lg md:rounded-xl transition-all shadow-sm"
+          >
             Apply Now
           </Button>
         </div>
