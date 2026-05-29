@@ -96,7 +96,7 @@ export function Footer() {
               <MapPin className="w-4 h-4 text-[#4a2e1b] shrink-0 mt-0.5 drop-shadow-sm" />
               <p>
                 2nd Floor, Al Harim Complex,<br />
-                Near Old Cottage Inn, Baghat,<br />
+                Near French talk, Baghat,<br />
                 Srinagar, J&K – 190005
               </p>
             </div>

@@ -1,286 +1,575 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronRight, ChevronLeft, CheckCircle2, ShieldCheck, Send, Sparkles } from "lucide-react";
-import { db } from "../../lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useState, useEffect, useRef } from "react";
+import { X, ArrowRight, ArrowLeft, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { ref, push, serverTimestamp } from "firebase/database";
+import { database } from "../../lib/firebase";
 
-export function ConsultationPopup() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [hasDismissed, setHasDismissed] = useState(false);
+// Pre-defined list of common study destinations to keep the autocomplete lightning fast
+const STUDY_DESTINATIONS = [
+  "Afghanistan",
+  "Albania",
+  "Algeria",
+  "American Samoa",
+  "Andorra",
+  "Angola",
+  "Anguilla",
+  "Antarctica",
+  "Antigua and Barbuda",
+  "Argentina",
+  "Armenia",
+  "Aruba",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belarus",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bermuda",
+  "Bhutan",
+  "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Bouvet Island",
+  "Brazil",
+  "British Indian Ocean Territory",
+  "Brunei",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Cape Verde",
+  "Cayman Islands",
+  "Central African Republic",
+  "Chad",
+  "Chile",
+  "China",
+  "Christmas Island",
+  "Cocos Islands",
+  "Colombia",
+  "Comoros",
+  "Congo",
+  "Cook Islands",
+  "Costa Rica",
+  "Croatia",
+  "Cuba",
+  "Cyprus",
+  "Czech Republic",
+  "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
+  "Estonia",
+  "Eswatini",
+  "Ethiopia",
+  "Falkland Islands",
+  "Faroe Islands",
+  "Fiji",
+  "Finland",
+  "France",
+  "French Guiana",
+  "French Polynesia",
+  "French Southern Territories",
+  "Gabon",
+  "Gambia",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Gibraltar",
+  "Greece",
+  "Greenland",
+  "Grenada",
+  "Guadeloupe",
+  "Guam",
+  "Guatemala",
+  "Guernsey",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Heard Island and McDonald Islands",
+  "Honduras",
+  "Hong Kong",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Iran",
+  "Iraq",
+  "Ireland",
+  "Isle of Man",
+  "Israel",
+  "Italy",
+  "Jamaica",
+  "Japan",
+  "Jersey",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kiribati",
+  "Kosovo",
+  "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
+  "Latvia",
+  "Lebanon",
+  "Lesotho",
+  "Liberia",
+  "Libya",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Macao",
+  "Madagascar",
+  "Malawi",
+  "Malaysia",
+  "Maldives",
+  "Mali",
+  "Malta",
+  "Marshall Islands",
+  "Martinique",
+  "Mauritania",
+  "Mauritius",
+  "Mayotte",
+  "Mexico",
+  "Micronesia",
+  "Moldova",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Montserrat",
+  "Morocco",
+  "Mozambique",
+  "Myanmar",
+  "Namibia",
+  "Nauru",
+  "Nepal",
+  "Netherlands",
+  "New Caledonia",
+  "New Zealand",
+  "Nicaragua",
+  "Niger",
+  "Nigeria",
+  "Niue",
+  "Norfolk Island",
+  "North Korea",
+  "North Macedonia",
+  "Northern Mariana Islands",
+  "Norway",
+  "Oman",
+  "Pakistan",
+  "Palau",
+  "Palestine",
+  "Panama",
+  "Papua New Guinea",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Pitcairn",
+  "Poland",
+  "Portugal",
+  "Puerto Rico",
+  "Qatar",
+  "Reunion",
+  "Romania",
+  "Russia",
+  "Rwanda",
+  "Saint Barthelemy",
+  "Saint Helena",
+  "Saint Kitts and Nevis",
+  "Saint Lucia",
+  "Saint Martin",
+  "Saint Pierre and Miquelon",
+  "Saint Vincent and the Grenadines",
+  "Samoa",
+  "San Marino",
+  "Sao Tome and Principe",
+  "Saudi Arabia",
+  "Senegal",
+  "Serbia",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapore",
+  "Sint Maarten",
+  "Slovakia",
+  "Slovenia",
+  "Solomon Islands",
+  "Somalia",
+  "South Africa",
+  "South Georgia and the South Sandwich Islands",
+  "South Korea",
+  "South Sudan",
+  "Spain",
+  "Sri Lanka",
+  "Sudan",
+  "Suriname",
+  "Svalbard and Jan Mayen",
+  "Sweden",
+  "Switzerland",
+  "Syria",
+  "Taiwan",
+  "Tajikistan",
+  "Tanzania",
+  "Thailand",
+  "Timor-Leste",
+  "Togo",
+  "Tokelau",
+  "Tonga",
+  "Trinidad and Tobago",
+  "Tunisia",
+  "Turkey",
+  "Turkmenistan",
+  "Turks and Caicos Islands",
+  "Tuvalu",
+  "Uganda",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States",
+  "United States Minor Outlying Islands",
+  "Uruguay",
+  "Uzbekistan",
+  "Vanuatu",
+  "Vatican City",
+  "Venezuela",
+  "Vietnam",
+  "Virgin Islands, British",
+  "Virgin Islands, U.S.",
+  "Wallis and Futuna",
+  "Western Sahara",
+  "Yemen",
+  "Zambia",
+  "Zimbabwe",
+  "Abkhazia",
+  "Aland Islands",
+  "Artsakh",
+  "Bonaire",
+  "Curacao",
+  "French West Indies",
+  "Kosrae",
+  "Nevis",
+  "Northern Cyprus",
+  "Rapa Nui",
+  "Saba",
+  "Saint Eustatius",
+  "Tahiti",
+  "Transnistria",
+  "Zanzibar",
+  "Catalonia",
+  "Scotland",
+  "Wales",
+  "England",
+  "Basque Country",
+  "Galicia",
+  "Quebec",
+  "Tibet",
+  "Green Cape",
+  "Azores",
+  "Canary Islands",
+  "Madeira",
+  "Bali",
+  "Sicily",
+  "Sardinia",
+  "Corsica",
+  "Guernica",
+  "Andaman and Nicobar Islands",
+  "Lakshadweep",
+  "Jeju",
+  "Hokkaido",
+  "Okinawa",
+  "Tasmania",
+  "Borneo",
+  "Java",
+  "Sumatra",
+  "Sulawesi",
+  "Lombok",
+  "Fiji Islands",
+  "Galapagos Islands",
+  "Far East Russia",
+  "Patagonia",
+  "Amazon Region",
+  "Caribbean Netherlands",
+  "Other"
+];
+
+export default function ConsultationPopup() {
+  const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  
+  // Added country to form state
+  const [formData, setFormData] = useState({ name: "", phone: "", email: "", country: "" });
+  
+  // Autocomplete Dropdown State
+  const [filteredCountries, setFilteredCountries] = useState<string[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    destinationCountry: "",
-    message: "",
-  });
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // 1. Trigger popup when scrolling past 800px
+  // Shows up in exactly 3 seconds, every single time the page loads/refreshes.
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 800 && !hasDismissed && !isSuccess) {
-        setIsVisible(true);
-      }
-    };
+    const timer = setTimeout(() => setIsOpen(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasDismissed, isSuccess]);
-
-  // 2. Lock background scrolling when popup is visible
   useEffect(() => {
-    if (isVisible) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+    if (isOpen && inputRef.current && !isLoading && !isSuccess) {
+      inputRef.current.focus();
     }
-    
-    // Cleanup function in case component unmounts
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isVisible]);
+  }, [step, isOpen, isLoading, isSuccess]);
 
   const handleClose = () => {
-    setIsVisible(false);
-    setHasDismissed(true); 
+    setIsOpen(false);
   };
 
-  const handleNext = () => setStep((s) => Math.min(s + 1, 3));
-  const handlePrev = () => setStep((s) => Math.max(s - 1, 1));
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (step < 4) setStep(step + 1);
+  };
+
+  const handleBack = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  // Autocomplete Filtering Logic
+  const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setFormData({ ...formData, country: val });
+    
+    if (val.length > 0) {
+      const filtered = STUDY_DESTINATIONS.filter(country => 
+        country.toLowerCase().includes(val.toLowerCase())
+      );
+      setFilteredCountries(filtered);
+      setShowDropdown(true);
+    } else {
+      setShowDropdown(false);
+    }
+  };
+
+  const selectCountry = (country: string) => {
+    setFormData({ ...formData, country });
+    setShowDropdown(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setIsLoading(true);
 
     try {
-      await addDoc(collection(db, "inquiries"), {
-        ...formData,
+      const inquiriesRef = ref(database, "inquiries");
+      await push(inquiriesRef, {
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        preferredCountry: formData.country, // Pushed to match your new dashboard column
+        source: "Popup Multi-Step",
         createdAt: serverTimestamp(),
-        source: "Glassmorphism Scroll Popup",
       });
+
       setIsSuccess(true);
       
-      // Auto-hide after 4 seconds
       setTimeout(() => {
-        setIsVisible(false);
-      }, 4000);
+        setIsOpen(false);
+      }, 3500);
     } catch (error) {
-      console.error("Error submitting inquiry:", error);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+      console.error("Error submitting consultation:", error);
+      setIsLoading(false);
     }
   };
 
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        // OVERLAY: Deepened to black/60 for max contrast against the bright popup
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md"
-        >
-          {/* WRAPPER: Holds both the blurred background blobs and the glass modal */}
-          <div className="relative w-full max-w-md">
-            
-            {/* VIBRANT BACKGROUND BLOBS: Added slight saturation for more pop */}
-            <div className="absolute top-[-10%] left-[-10%] w-72 h-72 bg-emerald-400 rounded-full mix-blend-multiply filter blur-[70px] opacity-80 animate-pulse" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-[70px] opacity-80 animate-pulse" style={{ animationDelay: '2s' }} />
-            <div className="absolute top-[20%] left-[20%] w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-[70px] opacity-70 animate-pulse" style={{ animationDelay: '4s' }} />
+  if (!isOpen) return null;
 
-            {/* MODAL: Brightened to white/85 with a crisp white border and deep shadow */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="w-full relative bg-white/85 backdrop-blur-2xl border-2 border-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] rounded-[2rem] overflow-hidden flex flex-col"
-            >
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-4 transition-opacity">
+      <div 
+        className="relative w-full max-w-md animate-in fade-in zoom-in-95 rounded-2xl bg-white shadow-2xl duration-200 overflow-visible"
+        role="dialog"
+      >
+        <div className="flex items-center justify-between px-6 pt-6 pb-2">
+          <h3 className="text-xl font-black text-brand-dark tracking-tight">
+            {isSuccess ? "Complete!" : "Free Consultation"}
+          </h3>
+          <button
+            onClick={handleClose}
+            className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Dynamic Progress Bar (Now out of 4 steps) */}
+        {!isLoading && !isSuccess && (
+          <div className="px-6 pb-6">
+            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-brand-primary transition-all duration-300 ease-out"
+                style={{ width: `${(step / 4) * 100}%` }}
+              />
+            </div>
+            <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-wider">
+              Step {step} of 4
+            </p>
+          </div>
+        )}
+
+        <div className="px-6 pb-8">
+          
+          {isSuccess ? (
+            <div className="py-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="mb-2 text-2xl font-black text-slate-900">Request Received!</h3>
+              <p className="text-slate-500 font-medium">Our expert counselors will contact you shortly.</p>
+            </div>
+          ) : isLoading ? (
+            <div className="py-10 text-center animate-in fade-in zoom-in-95 duration-300">
+              <Loader2 className="mx-auto h-10 w-10 text-brand-primary animate-spin mb-4" />
+              <h3 className="text-lg font-bold text-brand-dark mb-1">Finalizing your request...</h3>
+              <p className="text-sm text-slate-500">Securely routing to our counselors.</p>
+            </div>
+          ) : (
+            <form onSubmit={step === 4 ? handleSubmit : handleNext} className="space-y-6 relative">
               
-              {/* Header */}
-              <div className="p-6 pb-4 border-b border-black/10 flex items-center justify-between">
-                <div>
-                  <h3 className="font-black text-2xl text-black tracking-tighter flex items-center gap-2 drop-shadow-sm">
-                    <Sparkles className="w-5 h-5 text-black" /> Free Consultation
-                  </h3>
-                  <p className="text-black/70 text-xs font-bold mt-1 flex items-center gap-1.5 uppercase tracking-widest">
-                    <ShieldCheck className="w-4 h-4" /> Secure & Confidential
-                  </p>
+              {step === 1 && (
+                <div className="animate-in slide-in-from-right-4 fade-in duration-300">
+                  <label htmlFor="popup-name" className="block text-sm font-bold text-slate-700 mb-2">
+                    Let's start with your name
+                  </label>
+                  <input
+                    ref={inputRef}
+                    id="popup-name"
+                    name="name"
+                    type="text"
+                    required
+                    autoComplete="name"
+                    placeholder="Enter your full name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base font-medium focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-colors"
+                  />
                 </div>
-                <button 
-                  onClick={handleClose} 
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-black/5 text-black hover:bg-black/15 transition-all"
+              )}
+
+              {step === 2 && (
+                <div className="animate-in slide-in-from-right-4 fade-in duration-300">
+                  <label htmlFor="popup-phone" className="block text-sm font-bold text-slate-700 mb-2">
+                    What's the best number to reach you?
+                  </label>
+                  <input
+                    ref={inputRef}
+                    id="popup-phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    autoComplete="tel"
+                    placeholder="Mobile number"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base font-medium focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-colors"
+                  />
+                </div>
+              )}
+
+              {step === 3 && (
+                <div className="animate-in slide-in-from-right-4 fade-in duration-300">
+                  <label htmlFor="popup-email" className="block text-sm font-bold text-slate-700 mb-2">
+                    Your email address (Optional)
+                  </label>
+                  <input
+                    ref={inputRef}
+                    id="popup-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="Email address"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base font-medium focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-colors"
+                  />
+                </div>
+              )}
+
+              {/* NEW STEP 4: PREFERRED COUNTRY WITH AUTOCOMPLETE */}
+              {step === 4 && (
+                <div className="animate-in slide-in-from-right-4 fade-in duration-300 relative">
+                  <label htmlFor="popup-country" className="block text-sm font-bold text-slate-700 mb-2">
+                    Where do you want to study?
+                  </label>
+                  <input
+                    ref={inputRef}
+                    id="popup-country"
+                    name="country"
+                    type="text"
+                    autoComplete="off" // Disable browser default so our custom one shows clearly
+                    placeholder="Start typing a country..."
+                    value={formData.country}
+                    onChange={handleCountryChange}
+                    onFocus={handleCountryChange}
+                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)} // Delay allows click to register
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base font-medium focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-colors"
+                  />
+                  
+                  {/* Floating Autocomplete Dropdown List */}
+                  {showDropdown && filteredCountries.length > 0 && (
+                    <ul className="absolute left-0 right-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg custom-scrollbar">
+                      {filteredCountries.map((country) => (
+                        <li
+                          key={country}
+                          onMouseDown={() => selectCountry(country)} // onMouseDown fires before input's onBlur
+                          className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-700 hover:bg-brand-primary/5 hover:text-brand-primary transition-colors border-b border-slate-50 last:border-none"
+                        >
+                          {country}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+
+              <div className="flex items-center gap-3 pt-2">
+                {step > 1 && (
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors"
+                    aria-label="Go back"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
+                )}
+                
+                <button
+                  type="submit"
+                  className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-brand-primary px-6 text-sm font-bold text-white hover:opacity-90 active:scale-[0.98] transition-all shadow-sm"
                 >
-                  <X className="w-4 h-4" />
+                  {step < 4 ? (
+                    <>Next <ArrowRight className="h-4 w-4" /></>
+                  ) : (
+                    <>Submit Request <Send className="h-4 w-4" /></>
+                  )}
                 </button>
               </div>
 
-              {/* Body */}
-              <div className="p-6 relative min-h-[300px] flex flex-col">
-                
-                {isSuccess ? (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.9 }} 
-                    animate={{ opacity: 1, scale: 1 }} 
-                    className="flex flex-col items-center justify-center flex-1 text-center py-8"
-                  >
-                    <div className="w-20 h-20 bg-black text-white rounded-full flex items-center justify-center mb-5 shadow-xl shadow-black/20">
-                      <CheckCircle2 className="w-10 h-10" />
-                    </div>
-                    <h4 className="text-3xl font-black text-black mb-2 tracking-tighter">Request Received</h4>
-                    <p className="text-sm text-black/70 font-bold">Our expert counselors will reach out to you within 24 hours.</p>
-                  </motion.div>
-                ) : (
-                  <>
-                    {/* Progress Indicator */}
-                    <div className="flex gap-2 mb-8">
-                      {[1, 2, 3].map((i) => (
-                        <div 
-                          key={i} 
-                          className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
-                            step >= i ? "bg-black shadow-[0_0_10px_rgba(0,0,0,0.3)]" : "bg-black/10"
-                          }`} 
-                        />
-                      ))}
-                    </div>
-
-                    <form className="flex-1 flex flex-col" onSubmit={handleSubmit}>
-                      
-                      {/* STEP 1: Basic Info */}
-                      {step === 1 && (
-                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5 flex-1">
-                          <div>
-                            <label className="text-[11px] font-black text-black uppercase tracking-widest mb-2 block drop-shadow-sm">Full Name</label>
-                            <input 
-                              type="text" 
-                              required 
-                              placeholder="John Doe"
-                              value={formData.name}
-                              onChange={(e) => setFormData({...formData, name: e.target.value})}
-                              className="w-full px-5 py-3.5 bg-white/90 backdrop-blur-md border border-black/10 rounded-xl text-black font-bold placeholder:text-black/40 focus:outline-none focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 transition-all shadow-sm"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[11px] font-black text-black uppercase tracking-widest mb-2 block drop-shadow-sm">Email Address</label>
-                            <input 
-                              type="email" 
-                              required 
-                              placeholder="john@example.com"
-                              value={formData.email}
-                              onChange={(e) => setFormData({...formData, email: e.target.value})}
-                              className="w-full px-5 py-3.5 bg-white/90 backdrop-blur-md border border-black/10 rounded-xl text-black font-bold placeholder:text-black/40 focus:outline-none focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 transition-all shadow-sm"
-                            />
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* STEP 2: Phone & Destination */}
-                      {step === 2 && (
-                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5 flex-1">
-                          <div>
-                            <label className="text-[11px] font-black text-black uppercase tracking-widest mb-2 block drop-shadow-sm">Phone Number</label>
-                            <input 
-                              type="tel" 
-                              required 
-                              placeholder="+91 98765 43210"
-                              value={formData.phone}
-                              onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                              className="w-full px-5 py-3.5 bg-white/90 backdrop-blur-md border border-black/10 rounded-xl text-black font-bold placeholder:text-black/40 focus:outline-none focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 transition-all shadow-sm"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[11px] font-black text-black uppercase tracking-widest mb-2 block drop-shadow-sm">Destination Country</label>
-                            <select 
-                              required
-                              value={formData.destinationCountry}
-                              onChange={(e) => setFormData({...formData, destinationCountry: e.target.value})}
-                              className="w-full px-5 py-3.5 bg-white/90 backdrop-blur-md border border-black/10 rounded-xl text-black font-bold focus:outline-none focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 transition-all shadow-sm appearance-none"
-                            >
-                              <option value="" disabled className="text-black/50">Select a country</option>
-                              <option value="UK">United Kingdom</option>
-                              <option value="USA">United States</option>
-                              <option value="Canada">Canada</option>
-                              <option value="Australia">Australia</option>
-                              <option value="India">India (Domestic)</option>
-                              <option value="Other">Other</option>
-                            </select>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* STEP 3: Message & Submit */}
-                      {step === 3 && (
-                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5 flex-1">
-                          <div>
-                            <label className="text-[11px] font-black text-black uppercase tracking-widest mb-2 block drop-shadow-sm">How can we help? <span className="opacity-60">(Optional)</span></label>
-                            <textarea 
-                              rows={4}
-                              placeholder="I am looking for masters programs in Computer Science..."
-                              value={formData.message}
-                              onChange={(e) => setFormData({...formData, message: e.target.value})}
-                              className="w-full px-5 py-3.5 bg-white/90 backdrop-blur-md border border-black/10 rounded-xl text-black font-bold placeholder:text-black/40 focus:outline-none focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 transition-all shadow-sm resize-none"
-                            />
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* Footer Actions */}
-                      <div className="flex gap-3 mt-8">
-                        {step > 1 && (
-                          <button 
-                            type="button" 
-                            onClick={handlePrev}
-                            className="px-5 py-3.5 rounded-xl border border-black/10 bg-white/60 hover:bg-white text-black font-black transition-all shadow-sm flex items-center justify-center shrink-0"
-                          >
-                            <ChevronLeft className="w-5 h-5" />
-                          </button>
-                        )}
-                        
-                        {step < 3 ? (
-                          <button 
-                            type="button" 
-                            onClick={handleNext}
-                            disabled={
-                              (step === 1 && (!formData.name || !formData.email)) || 
-                              (step === 2 && (!formData.phone || !formData.destinationCountry))
-                            }
-                            className="flex-1 bg-black hover:bg-neutral-800 text-white rounded-xl font-black text-[15px] py-3.5 flex items-center justify-center gap-2 transition-all shadow-lg shadow-black/20 disabled:opacity-50 disabled:shadow-none"
-                          >
-                            Continue <ChevronRight className="w-5 h-5" />
-                          </button>
-                        ) : (
-                          <button 
-                            type="submit" 
-                            disabled={isSubmitting}
-                            className="flex-1 bg-black hover:bg-neutral-800 text-white rounded-xl font-black text-[15px] py-3.5 flex items-center justify-center gap-2 transition-all shadow-lg shadow-black/20 disabled:opacity-70"
-                          >
-                            {isSubmitting ? (
-                              <span className="animate-pulse">Submitting...</span>
-                            ) : (
-                              <>Submit Request <Send className="w-4 h-4 ml-1" /></>
-                            )}
-                          </button>
-                        )}
-                      </div>
-
-                    </form>
-                  </>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

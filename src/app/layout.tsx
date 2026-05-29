@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import FloatingContactButtons from "../components/shared/FloatingContactButtons";
+import VisitorTracker from "../components/shared/VisitorTracker"; 
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({ 
@@ -27,9 +28,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
-  // ADD THIS FOR GOOGLE SEARCH CONSOLE VERIFICATION
   verification: {
-    google: "YOUR_GOOGLE_VERIFICATION_CODE", // Get this from Google Search Console (HTML Tag method)
+    google: "YOUR_GOOGLE_VERIFICATION_CODE", 
   },
   openGraph: {
     title: "KICC | Premium International Career Consultancy",
@@ -85,12 +85,17 @@ export default function RootLayout({
         />
       </head>
       <body className={`${jakarta.className} min-h-screen flex flex-col`}>
+        
+        {/* INVISIBLE TRACKER - Logs unique visits to Firebase */}
+        <VisitorTracker />
+        
         <main className="flex-grow">
           {children}
         </main>
         
-        {/* ADD GOOGLE ANALYTICS HERE */}
-        <GoogleAnalytics gaId="G-YOUR_MEASUREMENT_ID" /> 
+        {/* Globally Available Floating Contact Buttons */}
+        <FloatingContactButtons />
+
       </body>
     </html>
   );

@@ -7,8 +7,8 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
 import { Send, Phone, Mail, MapPin, CheckCircle2, GraduationCap, Loader2 } from "lucide-react";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { ref, push, serverTimestamp } from "firebase/database";
+import { database } from "../../lib/firebase"; // Note we are importing 'database' now
 
 interface FormState {
   name: string;
@@ -64,8 +64,9 @@ export function LeadForm() {
     setIsSubmitting(true);
 
     try {
-      // Pushing to Firebase Firestore
-      await addDoc(collection(db, "inquiries"), {
+      // Pushing to Firebase Realtime Database
+      const inquiriesRef = ref(database, "inquiries");
+      await push(inquiriesRef, {
         ...form,
         status: "Unseen",
         date: new Date().toLocaleDateString(),

@@ -2,44 +2,81 @@
 
 import { useState, useEffect } from "react";
 import { FileText, MousePointerClick, RefreshCw } from "lucide-react";
+import { ref, get } from "firebase/database";
+import { database } from "../../lib/firebase"; 
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
-  const [trafficStats, setTrafficStats] = useState<any>(null);
+  const [trafficStats, setTrafficStats] = useState<any[]>([]);
   const [yearlyData, setYearlyData] = useState<any[]>([]);
 
-  // =========================================================================
-  // DATA FETCHING ARCHITECTURE (Ready for Firebase / Google Analytics integration)
-  // =========================================================================
   const fetchDashboardData = async () => {
     setLoading(true);
     
     try {
-      // TODO: Replace this simulated delay with actual Firebase/API calls
-      // Example: const traffic = await firebase.get('trafficStats');
-      await new Promise(resolve => setTimeout(resolve, 1500)); 
+      // 1. Fetch Inquiries AND Visits at the same time
+      const inquiriesRef = ref(database, "inquiries");
+      const visitsRef = ref(database, "visits");
+      
+      const [inquiriesSnapshot, visitsSnapshot] = await Promise.all([
+        get(inquiriesRef),
+        get(visitsRef)
+      ]);
+      
+      let inquiries: any[] = [];
+      let visits: any[] = [];
+      
+      if (inquiriesSnapshot.exists()) inquiries = Object.values(inquiriesSnapshot.val());
+      if (visitsSnapshot.exists()) visits = Object.values(visitsSnapshot.val());
 
-      // Simulated Response Data (Replace with real backend data)
+      // 2. Setup date boundaries
+      const now = new Date();
+      const oneDayMs = 24 * 60 * 60 * 1000;
+      
+      let dailyForms = 0, weeklyForms = 0, monthlyForms = 0;
+      let dailyVisits = 0, weeklyVisits = 0, monthlyVisits = 0;
+      
+      const monthlyLeadsCount = Array(12).fill(0); 
+      const monthlyVisitsCount = Array(12).fill(0); 
+
+      // 3. Process Inquiries
+      inquiries.forEach((inq) => {
+        let date = inq.createdAt ? new Date(inq.createdAt) : new Date();
+        if (isNaN(date.getTime())) date = new Date();
+        const timeDiff = now.getTime() - date.getTime();
+
+        if (timeDiff <= oneDayMs) dailyForms++;
+        if (timeDiff <= 7 * oneDayMs) weeklyForms++;
+        if (timeDiff <= 30 * oneDayMs) monthlyForms++;
+        if (date.getFullYear() === now.getFullYear()) monthlyLeadsCount[date.getMonth()]++;
+      });
+
+      // 4. Process Visits
+      visits.forEach((visit) => {
+        let date = visit.createdAt ? new Date(visit.createdAt) : new Date();
+        if (isNaN(date.getTime())) date = new Date();
+        const timeDiff = now.getTime() - date.getTime();
+
+        if (timeDiff <= oneDayMs) dailyVisits++;
+        if (timeDiff <= 7 * oneDayMs) weeklyVisits++;
+        if (timeDiff <= 30 * oneDayMs) monthlyVisits++;
+        if (date.getFullYear() === now.getFullYear()) monthlyVisitsCount[date.getMonth()]++;
+      });
+
+      // 5. Update the UI with exactly tracked Database Data
       setTrafficStats([
-        { label: "Daily", visitors: 342, forms: 18 },
-        { label: "Weekly", visitors: 2150, forms: 95 },
-        { label: "Monthly", visitors: 8900, forms: 412 },
+        { label: "Daily", visitors: dailyVisits, forms: dailyForms },
+        { label: "Weekly", visitors: weeklyVisits, forms: weeklyForms },
+        { label: "Monthly", visitors: monthlyVisits, forms: monthlyForms },
       ]);
 
-      setYearlyData([
-        { month: "Jan", visits: 45, leads: 28 },
-        { month: "Feb", visits: 35, leads: 15 },
-        { month: "Mar", visits: 55, leads: 42 },
-        { month: "Apr", visits: 85, leads: 58 },
-        { month: "May", visits: 70, leads: 45 },
-        { month: "Jun", visits: 95, leads: 65 },
-        { month: "Jul", visits: 100, leads: 82 },
-        { month: "Aug", visits: 90, leads: 60 },
-        { month: "Sep", visits: 65, leads: 38 },
-        { month: "Oct", visits: 50, leads: 22 },
-        { month: "Nov", visits: 60, leads: 31 },
-        { month: "Dec", visits: 75, leads: 48 },
-      ]);
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      setYearlyData(monthNames.map((month, idx) => ({
+        month,
+        leads: monthlyLeadsCount[idx], 
+        visits: monthlyVisitsCount[idx], 
+      })));
+
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     } finally {
@@ -101,7 +138,7 @@ export default function AdminDashboard() {
                 <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
                   <span className="text-slate-400">Conversion Rate</span>
                   <span className="text-green-600 bg-green-50 px-2 py-1 rounded-md">
-                    {((stat.forms / stat.visitors) * 100).toFixed(1)}%
+                    {stat.visitors > 0 ? ((stat.forms / stat.visitors) * 100).toFixed(1) : 0}%
                   </span>
                 </div>
               </div>
@@ -122,18 +159,24 @@ export default function AdminDashboard() {
             </div>
 
             <div className="h-72 flex items-end justify-between gap-2 md:gap-4 pt-10">
-              {yearlyData?.map((data: any, idx: number) => (
-                <div key={idx} className="flex flex-col items-center flex-1 group">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -mt-16 bg-brand-dark text-white text-xs font-bold py-1.5 px-3 rounded-lg pointer-events-none whitespace-nowrap z-10">
-                    {data.visits} Visits / {data.leads} Leads
+              {yearlyData?.map((data: any, idx: number) => {
+                const maxVisits = Math.max(...yearlyData.map(d => d.visits), 100);
+                const visitHeight = Math.min((data.visits / maxVisits) * 100, 100);
+                const leadHeight = Math.min((data.leads / maxVisits) * 100, 100);
+
+                return (
+                  <div key={idx} className="flex flex-col items-center flex-1 group">
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -mt-16 bg-brand-dark text-white text-xs font-bold py-1.5 px-3 rounded-lg pointer-events-none whitespace-nowrap z-10">
+                      {data.visits} Visits / {data.leads} Leads
+                    </div>
+                    <div className="w-full flex items-end justify-center gap-1 h-48 relative">
+                      <div className="w-full max-w-[20px] bg-blue-100 rounded-t-md transition-all duration-500" style={{ height: `${visitHeight}%` }}></div>
+                      <div className="w-full max-w-[20px] bg-brand-primary rounded-t-md transition-all duration-500" style={{ height: `${leadHeight}%` }}></div>
+                    </div>
+                    <span className="text-xs font-bold text-slate-400 mt-4">{data.month}</span>
                   </div>
-                  <div className="w-full flex items-end justify-center gap-1 h-48 relative">
-                    <div className="w-full max-w-[20px] bg-blue-100 rounded-t-md transition-all duration-500" style={{ height: `${data.visits}%` }}></div>
-                    <div className="w-full max-w-[20px] bg-brand-primary rounded-t-md transition-all duration-500" style={{ height: `${data.leads}%` }}></div>
-                  </div>
-                  <span className="text-xs font-bold text-slate-400 mt-4">{data.month}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </>

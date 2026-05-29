@@ -95,7 +95,7 @@ export function StateUniversities({ initialImages = {} }: { initialImages?: Reco
         
         <div className="max-w-4xl mb-6 md:mb-12 text-center md:text-left">
           <h2 className="text-2xl md:text-5xl font-black tracking-tight text-brand-dark mb-3 leading-tight">
-            Top Institutions by <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-blue-500 italic font-serif">Region</span>
+            Top <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-blue-500 italic font-serif">Domestic Universities</span>
           </h2>
         </div>
 
