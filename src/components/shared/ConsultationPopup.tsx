@@ -7,300 +7,12 @@ import { database } from "../../lib/firebase";
 
 // Pre-defined list of common study destinations to keep the autocomplete lightning fast
 const STUDY_DESTINATIONS = [
-  "Afghanistan",
-  "Albania",
-  "Algeria",
-  "American Samoa",
-  "Andorra",
-  "Angola",
-  "Anguilla",
-  "Antarctica",
-  "Antigua and Barbuda",
-  "Argentina",
-  "Armenia",
-  "Aruba",
-  "Australia",
-  "Austria",
-  "Azerbaijan",
-  "Bahamas",
-  "Bahrain",
-  "Bangladesh",
-  "Barbados",
-  "Belarus",
-  "Belgium",
-  "Belize",
-  "Benin",
-  "Bermuda",
-  "Bhutan",
-  "Bolivia",
-  "Bosnia and Herzegovina",
-  "Botswana",
-  "Bouvet Island",
-  "Brazil",
-  "British Indian Ocean Territory",
-  "Brunei",
-  "Bulgaria",
-  "Burkina Faso",
-  "Burundi",
-  "Cambodia",
-  "Cameroon",
-  "Canada",
-  "Cape Verde",
-  "Cayman Islands",
-  "Central African Republic",
-  "Chad",
-  "Chile",
-  "China",
-  "Christmas Island",
-  "Cocos Islands",
-  "Colombia",
-  "Comoros",
-  "Congo",
-  "Cook Islands",
-  "Costa Rica",
-  "Croatia",
-  "Cuba",
-  "Cyprus",
-  "Czech Republic",
-  "Denmark",
-  "Djibouti",
-  "Dominica",
-  "Dominican Republic",
-  "Ecuador",
-  "Egypt",
-  "El Salvador",
-  "Equatorial Guinea",
-  "Eritrea",
-  "Estonia",
-  "Eswatini",
-  "Ethiopia",
-  "Falkland Islands",
-  "Faroe Islands",
-  "Fiji",
-  "Finland",
-  "France",
-  "French Guiana",
-  "French Polynesia",
-  "French Southern Territories",
-  "Gabon",
-  "Gambia",
-  "Georgia",
-  "Germany",
-  "Ghana",
-  "Gibraltar",
-  "Greece",
-  "Greenland",
-  "Grenada",
-  "Guadeloupe",
-  "Guam",
-  "Guatemala",
-  "Guernsey",
-  "Guinea",
-  "Guinea-Bissau",
-  "Guyana",
-  "Haiti",
-  "Heard Island and McDonald Islands",
-  "Honduras",
-  "Hong Kong",
-  "Hungary",
-  "Iceland",
-  "India",
-  "Indonesia",
-  "Iran",
-  "Iraq",
-  "Ireland",
-  "Isle of Man",
-  "Israel",
-  "Italy",
-  "Jamaica",
-  "Japan",
-  "Jersey",
-  "Jordan",
-  "Kazakhstan",
-  "Kenya",
-  "Kiribati",
-  "Kosovo",
-  "Kuwait",
-  "Kyrgyzstan",
-  "Laos",
-  "Latvia",
-  "Lebanon",
-  "Lesotho",
-  "Liberia",
-  "Libya",
-  "Liechtenstein",
-  "Lithuania",
-  "Luxembourg",
-  "Macao",
-  "Madagascar",
-  "Malawi",
-  "Malaysia",
-  "Maldives",
-  "Mali",
-  "Malta",
-  "Marshall Islands",
-  "Martinique",
-  "Mauritania",
-  "Mauritius",
-  "Mayotte",
-  "Mexico",
-  "Micronesia",
-  "Moldova",
-  "Monaco",
-  "Mongolia",
-  "Montenegro",
-  "Montserrat",
-  "Morocco",
-  "Mozambique",
-  "Myanmar",
-  "Namibia",
-  "Nauru",
-  "Nepal",
-  "Netherlands",
-  "New Caledonia",
-  "New Zealand",
-  "Nicaragua",
-  "Niger",
-  "Nigeria",
-  "Niue",
-  "Norfolk Island",
-  "North Korea",
-  "North Macedonia",
-  "Northern Mariana Islands",
-  "Norway",
-  "Oman",
-  "Pakistan",
-  "Palau",
-  "Palestine",
-  "Panama",
-  "Papua New Guinea",
-  "Paraguay",
-  "Peru",
-  "Philippines",
-  "Pitcairn",
-  "Poland",
-  "Portugal",
-  "Puerto Rico",
-  "Qatar",
-  "Reunion",
-  "Romania",
-  "Russia",
-  "Rwanda",
-  "Saint Barthelemy",
-  "Saint Helena",
-  "Saint Kitts and Nevis",
-  "Saint Lucia",
-  "Saint Martin",
-  "Saint Pierre and Miquelon",
-  "Saint Vincent and the Grenadines",
-  "Samoa",
-  "San Marino",
-  "Sao Tome and Principe",
-  "Saudi Arabia",
-  "Senegal",
-  "Serbia",
-  "Seychelles",
-  "Sierra Leone",
-  "Singapore",
-  "Sint Maarten",
-  "Slovakia",
-  "Slovenia",
-  "Solomon Islands",
-  "Somalia",
-  "South Africa",
-  "South Georgia and the South Sandwich Islands",
-  "South Korea",
-  "South Sudan",
-  "Spain",
-  "Sri Lanka",
-  "Sudan",
-  "Suriname",
-  "Svalbard and Jan Mayen",
-  "Sweden",
-  "Switzerland",
-  "Syria",
-  "Taiwan",
-  "Tajikistan",
-  "Tanzania",
-  "Thailand",
-  "Timor-Leste",
-  "Togo",
-  "Tokelau",
-  "Tonga",
-  "Trinidad and Tobago",
-  "Tunisia",
-  "Turkey",
-  "Turkmenistan",
-  "Turks and Caicos Islands",
-  "Tuvalu",
-  "Uganda",
-  "Ukraine",
-  "United Arab Emirates",
-  "United Kingdom",
-  "United States",
-  "United States Minor Outlying Islands",
-  "Uruguay",
-  "Uzbekistan",
-  "Vanuatu",
-  "Vatican City",
-  "Venezuela",
-  "Vietnam",
-  "Virgin Islands, British",
-  "Virgin Islands, U.S.",
-  "Wallis and Futuna",
-  "Western Sahara",
-  "Yemen",
-  "Zambia",
-  "Zimbabwe",
-  "Abkhazia",
-  "Aland Islands",
-  "Artsakh",
-  "Bonaire",
-  "Curacao",
-  "French West Indies",
-  "Kosrae",
-  "Nevis",
-  "Northern Cyprus",
-  "Rapa Nui",
-  "Saba",
-  "Saint Eustatius",
-  "Tahiti",
-  "Transnistria",
-  "Zanzibar",
-  "Catalonia",
-  "Scotland",
-  "Wales",
-  "England",
-  "Basque Country",
-  "Galicia",
-  "Quebec",
-  "Tibet",
-  "Green Cape",
-  "Azores",
-  "Canary Islands",
-  "Madeira",
-  "Bali",
-  "Sicily",
-  "Sardinia",
-  "Corsica",
-  "Guernica",
-  "Andaman and Nicobar Islands",
-  "Lakshadweep",
-  "Jeju",
-  "Hokkaido",
-  "Okinawa",
-  "Tasmania",
-  "Borneo",
-  "Java",
-  "Sumatra",
-  "Sulawesi",
-  "Lombok",
-  "Fiji Islands",
-  "Galapagos Islands",
-  "Far East Russia",
-  "Patagonia",
-  "Amazon Region",
-  "Caribbean Netherlands",
+  "Australia", "Austria", "Canada", "China", "Cyprus", "Czech Republic", 
+  "Denmark", "Finland", "France", "Germany", "Greece", "Hong Kong", 
+  "Hungary", "Ireland", "Italy", "Japan", "Malaysia", "Malta", 
+  "Netherlands", "New Zealand", "Norway", "Poland", "Portugal", 
+  "Russia", "Singapore", "South Korea", "Spain", "Sweden", 
+  "Switzerland", "United Arab Emirates", "United Kingdom", "United States", 
   "Other"
 ];
 
@@ -310,24 +22,39 @@ export default function ConsultationPopup() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
-  // Added country to form state
   const [formData, setFormData] = useState({ name: "", phone: "", email: "", country: "" });
   
-  // Autocomplete Dropdown State
   const [filteredCountries, setFilteredCountries] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Shows up in exactly 3 seconds, every single time the page loads/refreshes.
+  // 1. Shows up in exactly 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => setIsOpen(true), 3000);
     return () => clearTimeout(timer);
   }, []);
 
+  // 2. CRITICAL FIX: Freeze the background scrolling when open
   useEffect(() => {
+    if (isOpen) {
+      // Locks the scroll at the exact current position
+      document.body.style.overflow = "hidden";
+    } else {
+      // Unlocks the scroll when closed
+      document.body.style.overflow = "";
+    }
+
+    // Cleanup function in case the component unmounts
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+useEffect(() => {
     if (isOpen && inputRef.current && !isLoading && !isSuccess) {
-      inputRef.current.focus();
+      // The preventScroll flag absolutely stops the page from jumping down!
+      inputRef.current.focus({ preventScroll: true });
     }
   }, [step, isOpen, isLoading, isSuccess]);
 
@@ -344,7 +71,6 @@ export default function ConsultationPopup() {
     if (step > 1) setStep(step - 1);
   };
 
-  // Autocomplete Filtering Logic
   const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setFormData({ ...formData, country: val });
@@ -375,7 +101,7 @@ export default function ConsultationPopup() {
         name: formData.name,
         phone: formData.phone,
         email: formData.email,
-        preferredCountry: formData.country, // Pushed to match your new dashboard column
+        preferredCountry: formData.country, 
         source: "Popup Multi-Step",
         createdAt: serverTimestamp(),
       });
@@ -412,7 +138,6 @@ export default function ConsultationPopup() {
           </button>
         </div>
 
-        {/* Dynamic Progress Bar (Now out of 4 steps) */}
         {!isLoading && !isSuccess && (
           <div className="px-6 pb-6">
             <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
@@ -505,7 +230,6 @@ export default function ConsultationPopup() {
                 </div>
               )}
 
-              {/* NEW STEP 4: PREFERRED COUNTRY WITH AUTOCOMPLETE */}
               {step === 4 && (
                 <div className="animate-in slide-in-from-right-4 fade-in duration-300 relative">
                   <label htmlFor="popup-country" className="block text-sm font-bold text-slate-700 mb-2">
@@ -516,22 +240,21 @@ export default function ConsultationPopup() {
                     id="popup-country"
                     name="country"
                     type="text"
-                    autoComplete="off" // Disable browser default so our custom one shows clearly
+                    autoComplete="off" 
                     placeholder="Start typing a country..."
                     value={formData.country}
                     onChange={handleCountryChange}
                     onFocus={handleCountryChange}
-                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)} // Delay allows click to register
+                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)} 
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base font-medium focus:border-brand-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 transition-colors"
                   />
                   
-                  {/* Floating Autocomplete Dropdown List */}
                   {showDropdown && filteredCountries.length > 0 && (
                     <ul className="absolute left-0 right-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg custom-scrollbar">
                       {filteredCountries.map((country) => (
                         <li
                           key={country}
-                          onMouseDown={() => selectCountry(country)} // onMouseDown fires before input's onBlur
+                          onMouseDown={() => selectCountry(country)} 
                           className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-700 hover:bg-brand-primary/5 hover:text-brand-primary transition-colors border-b border-slate-50 last:border-none"
                         >
                           {country}
