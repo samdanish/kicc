@@ -208,7 +208,7 @@ export function Hero() {
             <div className="bg-white/90 md:bg-transparent border border-black/5 md:border-none backdrop-blur-md rounded-2xl p-3 md:p-0 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 text-center md:text-left shadow-sm md:shadow-none">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-yellow-100/80 rounded-full flex items-center justify-center text-yellow-600"><Users className="w-5 h-5 md:w-6 md:h-6" /></div>
               <div>
-                <h3 className="text-xl md:text-3xl font-black text-brand-dark mb-0.5">25+</h3>
+                <h3 className="text-xl md:text-3xl font-black text-brand-dark mb-0.5">120+</h3>
                 <p className="text-[9px] md:text-[11px] font-bold text-slate-500 uppercase tracking-widest">Placements</p>
               </div>
             </div>

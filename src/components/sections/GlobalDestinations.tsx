@@ -43,6 +43,19 @@ const destinations = {
     { name: "Anwer Khan Modern Medical College", year: "2008", detail: "Private" },
     { name: "East West Medical College", year: "2000", detail: "Private" },
   ],
+  Uzbekistan: [
+  { name: "Tashkent Medical Academy", year: "1919", detail: "Tashkent (Government)" },
+  { name: "Samarkand State Medical University", year: "1930", detail: "Samarkand (Government)" },
+  { name: "Andijan State Medical Institute", year: "1955", detail: "Andijan (Government)" },
+  { name: "Bukhara State Medical Institute", year: "1990", detail: "Bukhara (Government)" },
+  { name: "Fergana Medical Institute of Public Health", year: "1991", detail: "Fergana (Government)" },
+  { name: "Tashkent Pediatric Medical Institute", year: "1972", detail: "Tashkent (Government)" },
+  { name: "Tashkent State Dental Institute", year: "2014", detail: "Tashkent (Government)" },
+  { name: "Urgench Branch of Tashkent Medical Academy", year: "1992", detail: "Urgench (Branch Campus)" },
+  { name: "Termez Branch of Tashkent Medical Academy", year: "2018", detail: "Termez (Branch Campus)" },
+  { name: "Akfa University School of Medicine", year: "2019", detail: "Tashkent (Private)" },
+],
+
 };
 
 const countries = Object.keys(destinations) as Array<keyof typeof destinations>;
