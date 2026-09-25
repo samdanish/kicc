@@ -128,30 +128,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* "ULTRA BEST" DEVELOPER TAG 
-          A glowing, sleek, dark-mode pill that stands out beautifully 
-        */}
-        <div className="mt-8 flex justify-center pb-2">
-          <a 
-            href="https://qurevo.in"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-slate-900 via-[#2a170c] to-slate-900 rounded-full shadow-[0_8px_20px_rgba(74,46,27,0.25)] hover:shadow-[0_8px_25px_rgba(74,46,27,0.4)] transition-all duration-300 transform hover:-translate-y-1 border border-[#4a2e1b]/40 overflow-hidden"
-          >
-            {/* Shimmer Effect */}
-            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
-            
-            <span className="text-[10px] md:text-xs font-semibold text-slate-300 tracking-wide z-10">
-              Designed & Developed by
-            </span>
-            
-            <div className="flex items-center gap-1.5 z-10">
-              <span className="text-[10px] md:text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-200 to-yellow-400 drop-shadow-sm tracking-wide">
-                Qurevo Technologies
-              </span>
-               </div>
-          </a>
-        </div>
+
 
       </div>
     </footer>

@@ -127,15 +127,7 @@ export default function AdminLogin() {
         </form>
       </div>
 
-      {/* Cinematic H Studio Branding */}
-      <div className="absolute bottom-8 z-20 flex flex-col items-center opacity-60 hover:opacity-100 transition-opacity duration-700 cursor-default">
-        <p className="text-[9px] tracking-[0.3em] text-slate-500 uppercase font-medium mb-1">
-          Powered By
-        </p>
-        <h3 className="text-xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-white to-slate-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-          H<span className="text-orange-500 mx-1 inline-block drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]">·</span>STUDIO
-        </h3>
-      </div>
+
     </div>
   );
 }
