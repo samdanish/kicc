@@ -4,7 +4,7 @@
       ".read": "auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true",
       ".write": "auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true",
       "$inquiry_id": {
-        ".write": "!data.exists()",
+        ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists() && auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true)",
         ".validate": "newData.hasChildren(['name', 'phone', 'createdAt'])",
         "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
         "phone": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30" },
@@ -23,7 +23,7 @@
       ".read": "auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true",
       ".write": "auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true",
       "$visit_id": {
-        ".write": "!data.exists()",
+        ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists() && auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true)",
         ".validate": "newData.hasChildren(['createdAt', 'path'])",
         "path": { ".validate": "newData.isString() && newData.val().length <= 200" },
         "createdAt": { ".validate": "newData.isNumber()" },
