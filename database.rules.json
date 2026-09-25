@@ -1,0 +1,36 @@
+{
+  "rules": {
+    "inquiries": {
+      ".read": "auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true",
+      ".write": "auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true",
+      "$inquiry_id": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['name', 'phone', 'createdAt'])",
+        "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
+        "phone": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30" },
+        "email": { ".validate": "newData.isString() && newData.val().length <= 254" },
+        "preferredCountry": { ".validate": "newData.isString() && newData.val().length <= 120" },
+        "neetScore": { ".validate": "newData.isString() && newData.val().length <= 20" },
+        "message": { ".validate": "newData.isString() && newData.val().length <= 1000" },
+        "status": { ".validate": "newData.isString() && newData.val().length <= 20" },
+        "date": { ".validate": "newData.isString() && newData.val().length <= 30" },
+        "source": { ".validate": "newData.isString() && newData.val().length <= 50" },
+        "createdAt": { ".validate": "newData.isNumber()" },
+        "$other": { ".validate": false }
+      }
+    },
+    "visits": {
+      ".read": "auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true",
+      ".write": "auth != null && auth.token.email == 'samdanish94@gmail.com' && auth.token.email_verified == true",
+      "$visit_id": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['createdAt', 'path'])",
+        "path": { ".validate": "newData.isString() && newData.val().length <= 200" },
+        "createdAt": { ".validate": "newData.isNumber()" },
+        "$other": { ".validate": false }
+      }
+    },
+    ".read": false,
+    ".write": false
+  }
+}

@@ -1,196 +1,20 @@
+// Admin security relies on Firebase Auth (signup disabled) + Firestore/RTDB rules checking the master admin email. Client-side locks and OTP were removed — they were bypassable.
 "use client";
 
 import { useState, useEffect } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
-import { auth, db } from "../../../lib/firebase";
+import { auth } from "../../../lib/firebase";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, Lock, Mail, Loader2, MapPin, KeyRound, AlertTriangle } from "lucide-react";
-import emailjs from '@emailjs/browser';
-
-// Haversine formula to calculate distance between two coordinates in meters
-function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371e3;
-  const toRad = (val: number) => (val * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; 
-}
+import { ShieldCheck, Lock, Mail, Loader2 } from "lucide-react";
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState("placeholder@gmail.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(true); // NEW: Prevents showing form before checks finish
-  
-  // Geolocation & Security States
-  const [coords, setCoords] = useState<{lat: number, lng: number} | null>(null);
-  const [geoError, setGeoError] = useState("");
-  
-  // Persistent Failed Attempts (survives refresh)
-  const [failedAttempts, setFailedAttempts] = useState(0);
-  
-  const [isZoneLocked, setIsZoneLocked] = useState(false);
-  const [activeLockId, setActiveLockId] = useState("");
-  
-  // OTP States
-  const [showOtpFlow, setShowOtpFlow] = useState(false);
-  const [userOtp, setUserOtp] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState("");
   const [sparks, setSparks] = useState<any[]>([]);
 
   const router = useRouter();
-
-  // 1. Initialize logic on Mount
-  useEffect(() => {
-    // Load failed attempts from local storage
-    const savedAttempts = localStorage.getItem("admin_failed_attempts");
-    if (savedAttempts) {
-      setFailedAttempts(parseInt(savedAttempts, 10));
-    }
-
-    if (!navigator.geolocation) {
-      setGeoError("Geolocation is not supported by your browser.");
-      setIsInitializing(false);
-      return;
-    }
-
-    setGeoError("Authenticating location...");
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        setCoords({ lat: latitude, lng: longitude });
-        
-        // Wait for Firestore to check if this area is locked
-        await checkActiveLocks(latitude, longitude);
-        
-        setGeoError(""); // Clear loading text
-        setIsInitializing(false); // Safe to show UI now
-      },
-      (err) => {
-        setGeoError("Location access denied. Admin panel requires location access.");
-        setIsInitializing(false);
-      },
-      { enableHighAccuracy: true }
-    );
-  }, []);
-
-  // 2. Check Firestore for active zone locks
-  const checkActiveLocks = async (lat: number, lng: number) => {
-    try {
-      const locksRef = collection(db, "admin_locks");
-      const q = query(locksRef, where("expiresAt", ">", Date.now()));
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc) => {
-        const lockData = doc.data();
-        const distance = getDistance(lat, lng, lockData.lat, lockData.lng);
-        if (distance <= 500) {
-          setIsZoneLocked(true);
-          setActiveLockId(doc.id);
-        }
-      });
-    } catch (err) {
-      console.error("Failed to check locks", err);
-    }
-  };
-
-  // 3. Handle Standard Login
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      
-      // Success! Clear attempts.
-      localStorage.removeItem("admin_failed_attempts");
-      setFailedAttempts(0);
-      router.push("/admin");
-
-    } catch (err: any) {
-      // Failed login logic
-      const newAttempts = failedAttempts + 1;
-      setFailedAttempts(newAttempts);
-      localStorage.setItem("admin_failed_attempts", newAttempts.toString());
-      
-      if (newAttempts >= 3 && coords) {
-        await lockLocationZone(coords.lat, coords.lng);
-      } else {
-        setError(`Unauthorised access. Attempts remaining: ${3 - newAttempts}`);
-      }
-      setLoading(false);
-    }
-  };
-
-  // 4. Lock the 500m zone & trigger OTP automatically
-  const lockLocationZone = async (lat: number, lng: number) => {
-    try {
-      const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-      const locksRef = collection(db, "admin_locks");
-      const newLock = await addDoc(locksRef, { lat, lng, expiresAt });
-      
-      setActiveLockId(newLock.id);
-      setIsZoneLocked(true);
-      await triggerOtpOverride(); // Send OTP right away
-    } catch (err) {
-      console.error("Error applying lock:", err);
-    }
-  };
-
-  // 5. Trigger OTP Override manually
-  const triggerOtpOverride = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(otp);
-      
-      await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        { otp: otp, to_email: process.env.NEXT_PUBLIC_ADMIN_EMAIL },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-      );
-
-      setShowOtpFlow(true);
-    } catch (err) {
-      console.error("Failed to send OTP:", err);
-      setError("Failed to send OTP email. Please try again.");
-    }
-    setLoading(false);
-  };
-
-  // 6. Verify OTP to clear the lock
-  const handleOtpVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    if (userOtp === generatedOtp) {
-      try {
-        await deleteDoc(doc(db, "admin_locks", activeLockId));
-        setIsZoneLocked(false);
-        setShowOtpFlow(false);
-        
-        // Reset everything
-        setFailedAttempts(0);
-        localStorage.removeItem("admin_failed_attempts"); 
-        
-        setError("Security override successful. You may now login.");
-      } catch (err) {
-        setError("Error clearing lock. Please contact master admin.");
-      }
-    } else {
-      setError("Invalid OTP.");
-    }
-    setLoading(false);
-  };
 
   // Background sparks effect
   useEffect(() => {
@@ -204,16 +28,19 @@ export default function AdminLogin() {
     })));
   }, []);
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-  // FULL SCREEN LOADER: Block UI completely while location & Firebase are checked
-  if (isInitializing) {
-    return (
-      <div className="min-h-screen bg-[#0B1727] flex flex-col items-center justify-center p-4">
-        <Loader2 className="w-12 h-12 text-blue-400 animate-spin mb-4" />
-        <p className="text-blue-400 font-bold animate-pulse">Running security checks...</p>
-      </div>
-    );
-  }
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/admin");
+    } catch (err: any) {
+      setError("Unauthorised access or incorrect credentials.");
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0B1727] flex flex-col items-center justify-center p-4 relative overflow-hidden">
@@ -253,113 +80,51 @@ export default function AdminLogin() {
           </p>
         </div>
 
-        {error && !isZoneLocked && (
+        {error && (
           <div className="mb-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold p-3 rounded-xl text-center">
             {error}
           </div>
         )}
 
-        {/* STATE 1: Geolocation Error */}
-        {geoError ? (
-           <div className="text-center space-y-4 py-4">
-             <MapPin className="w-12 h-12 text-red-500 mx-auto" />
-             <p className="text-red-400 font-bold px-4">{geoError}</p>
-           </div>
-        ) 
-        
-        /* STATE 2: Zone is Locked (but OTP input not open yet) */
-        : isZoneLocked && !showOtpFlow ? (
-          <div className="space-y-6">
-            <div className="bg-red-500/10 border border-red-500/20 p-5 rounded-xl text-center">
-              <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" />
-              <h3 className="text-red-500 font-bold mb-1">Location Restricted</h3>
-              <p className="text-red-400 text-xs">Maximum attempts reached. Admin access has been locked within a 500m radius of this location.</p>
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-slate-300 uppercase tracking-widest pl-1">Admin Email</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="master@admin.com"
+                className="w-full pl-12 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-primary transition-all"
+                required
+              />
             </div>
-            
-            <button
-              onClick={triggerOtpOverride}
-              disabled={loading}
-              className="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition-all border border-slate-600 flex items-center justify-center gap-2"
-            >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Request Override OTP"}
-            </button>
           </div>
-        ) 
-        
-        /* STATE 3: OTP Input Form */
-        : showOtpFlow ? (
-          <form onSubmit={handleOtpVerify} className="space-y-5">
-            {error && (
-              <div className="mb-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold p-3 rounded-xl text-center">
-                {error}
-              </div>
-            )}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-widest pl-1">Override Verification</label>
-              <p className="text-xs text-orange-400 mb-2">A 6-digit OTP has been dispatched to the master admin email.</p>
-              <div className="relative">
-                <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="text"
-                  value={userOtp}
-                  onChange={(e) => setUserOtp(e.target.value)}
-                  placeholder="Enter 6-digit OTP"
-                  className="w-full pl-12 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white focus:outline-none focus:border-orange-500 transition-all"
-                  required
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2"
-            >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify & Unlock"}
-            </button>
-          </form>
-        ) 
-        
-        /* STATE 4: Normal Login */
-        : (
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-widest pl-1">Admin Email</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-primary transition-all"
-                  required
-                />
-              </div>
-            </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-widest pl-1">Passcode</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your master password"
-                  className="w-full pl-12 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-primary transition-all"
-                  required
-                />
-              </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-slate-300 uppercase tracking-widest pl-1">Passcode</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your master password"
+                className="w-full pl-12 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-primary transition-all"
+                required
+              />
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 bg-blue-400 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-2 mt-4"
-            >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Secure Login"}
-            </button>
-          </form>
-        )}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 bg-blue-400 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-2 mt-4"
+          >
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Secure Login"}
+          </button>
+        </form>
       </div>
 
       {/* Cinematic H Studio Branding */}

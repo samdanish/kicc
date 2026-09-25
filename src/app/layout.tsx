@@ -29,9 +29,6 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
-  verification: {
-    google: "YOUR_GOOGLE_VERIFICATION_CODE", 
-  },
   openGraph: {
     title: "KICC |Kashmir International Career Consultancy | KICC Srinagar",
     description: "Start your international education journey with KICC. Top universities, scholarships, and visa success.",

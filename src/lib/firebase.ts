@@ -1,4 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 import { getDatabase } from "firebase/database"; // Realtime Database
 import { getFirestore } from "firebase/firestore"; // Firestore
 import { getAuth } from "firebase/auth"; // Authentication <-- This was missing!
@@ -15,6 +16,22 @@ const firebaseConfig = {
 
 // Initialize Firebase App
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+// App Check runs only in the browser. Skip it during SSR/prerendering.
+if (typeof window !== "undefined") {
+  // Enable debug token ONLY in development so localhost isn't blocked.
+  if (process.env.NODE_ENV === "development") {
+    // @ts-ignore
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  }
+
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider(
+      process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!
+    ),
+    isTokenAutoRefreshEnabled: true,
+  });
+}
 
 // Export all the services your app needs:
 export const database = getDatabase(app); // Used by Admin Dashboard (Realtime DB)

@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the user is authenticated AND their email matches the official master admin email
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'samdanish94@gmail.com' && request.auth.token.email_verified == true;
+    }
+
+    // Public users need to see the images on the website, but ONLY the admin can upload or change them.
+    match /domesticImages/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Deny access to absolutely everything else by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

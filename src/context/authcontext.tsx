@@ -21,7 +21,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      // Rules are the real gate. This is only UX.
+      if (user) {
+        if (user.email !== 'samdanish94@gmail.com' || user.emailVerified !== true) {
+          await auth.signOut();
+          setUser(null);
+          setLoading(false);
+          router.push("/admin/login");
+          return;
+        }
+      }
+      
       setUser(user);
       setLoading(false);
 
